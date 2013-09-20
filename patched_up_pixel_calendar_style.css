@@ -1,0 +1,32 @@
+.widget_patched_up_pixel_calendar { text-align:center; }
+
+.widget-title { text-align: left; }
+
+#patched_up_pixel_calendar { 
+  width: 265px;
+  margin: 0 auto; 
+}
+
+.patched_up_pixel_calendar_week { 
+  display:block; float:left; 
+  width:4px; height:30px; 
+  margin-right: 1px;
+}
+
+.patched_up_pixel_calendar_day {
+  display:block; clear:both; 
+  width:4px; height:4px;
+  margin-bottom: 1px !important; 
+  background-color: #eee;
+}
+
+.patched_up_pixel_calendar_blankday {
+  display:block; clear:both; 
+  width:4px; height:4px;
+  margin-bottom: 1px !important; 
+  background-color: #fff;
+}
+
+.someposts {
+  background-color: #aaa;
+}
