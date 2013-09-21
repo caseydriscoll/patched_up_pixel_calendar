@@ -17,7 +17,11 @@
   display:block; clear:both; 
   width:4px; height:4px;
   margin-bottom: 1px !important; 
-  background-color: #eee;
+  background-color: #f3f3f3;
+}
+
+.patched_up_pixel_calendar_day:hover {
+  background-color: #ff0000;
 }
 
 .patched_up_pixel_calendar_blankday {
