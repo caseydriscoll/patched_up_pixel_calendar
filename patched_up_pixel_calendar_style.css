@@ -17,20 +17,22 @@
   display:block; clear:both; 
   width:4px; height:4px;
   margin-bottom: 1px !important; 
-  background-color: #f3f3f3;
+  background-color: #000000;
+  opacity: 0.1;
 }
 
-.patched_up_pixel_calendar_day:hover {
-  background-color: #ff0000;
-}
+/*.patched_up_pixel_calendar_week:hover {*/
+  /*background-color: #ffaaaa;*/
+/*}*/
 
 .patched_up_pixel_calendar_blankday {
   display:block; clear:both; 
   width:4px; height:4px;
   margin-bottom: 1px !important; 
   background-color: #fff;
+  opacity: 0.1;
 }
 
-.onepost   { background-color: #aaa; }
-.twoposts  { background-color: #666; }
-.manyposts { background-color: #222; }
+.onepost   { opacity: 0.4; }
+.twoposts  { opacity: 0.7; }
+.manyposts { opacity: 1.0; }
