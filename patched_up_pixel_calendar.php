@@ -36,10 +36,15 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
 
     $calendar_info['pixel'] .= '" class="patched_up_pixel_calendar_day'; 
 
-    if ( $numberofposts > 0 )
-      $calendar_info['pixel'] .= ' someposts'; 
+    if ( $numberofposts == 0 )
+      $calendar_info['pixel'] .= '"></li>';
+    elseif ( $numberofposts == 1 )
+      $calendar_info['pixel'] .= ' onepost"></li>';
+    elseif ( $numberofposts == 2 )
+      $calendar_info['pixel'] .= ' twoposts"></li>'; 
+    elseif ( $numberofposts >= 3 )
+      $calendar_info['pixel'] .= ' manyposts"></li>'; 
 
-    $calendar_info['pixel'] .= '"></li>';
 
     $calendar_info['dayoftheyear']++;
 

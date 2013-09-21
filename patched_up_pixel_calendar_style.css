@@ -27,6 +27,6 @@
   background-color: #fff;
 }
 
-.someposts {
-  background-color: #aaa;
-}
+.onepost   { background-color: #aaa; }
+.twoposts  { background-color: #666; }
+.manyposts { background-color: #222; }
