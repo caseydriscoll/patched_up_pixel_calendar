@@ -26,25 +26,34 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
   public function build_pixel($calendar_info) {
     $calendar_info['pixel'] = '<li title="';
     $numberofposts = 0;
+    $tooltip = '';
 
-    while ( $calendar_info['current_post']['date'] == $calendar_info['dayoftheyear'] ) {
-      $calendar_info['pixel'].= $calendar_info['current_post']['title'];
-      $calendar_info['current_post'] = array_pop($calendar_info['posts']);
+    if ( $calendar_info['current_post']['date'] == $calendar_info['dayoftheyear'] ) {
+      $tooltip .= '<span>';
 
-      $numberofposts++;
+      while ( $calendar_info['current_post']['date'] == $calendar_info['dayoftheyear'] ) {
+        $tooltip .= $calendar_info['current_post']['title'] . '<br />';
+        $calendar_info['current_post'] = array_pop($calendar_info['posts']);
+
+        $numberofposts++;
+      }
+
+      $tooltip .= '</span>';
     }
 
     $calendar_info['pixel'] .= '" class="patched_up_pixel_calendar_day'; 
 
     if ( $numberofposts == 0 )
-      $calendar_info['pixel'] .= '"></li>';
+      $calendar_info['pixel'] .= '">';
     elseif ( $numberofposts == 1 )
-      $calendar_info['pixel'] .= ' onepost"></li>';
+      $calendar_info['pixel'] .= ' tooltip onepost">';
     elseif ( $numberofposts == 2 )
-      $calendar_info['pixel'] .= ' twoposts"></li>'; 
+      $calendar_info['pixel'] .= ' tooltip twoposts">'; 
     elseif ( $numberofposts >= 3 )
-      $calendar_info['pixel'] .= ' manyposts"></li>'; 
+      $calendar_info['pixel'] .= ' tooltip manyposts">'; 
 
+
+    $calendar_info['pixel'] .= $tooltip . '</li>';
 
     $calendar_info['dayoftheyear']++;
 
@@ -86,8 +95,6 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     }
     $calendar_info['posts'] = array_reverse($calendar_info['posts']);
     $calendar_info['current_post'] = array_pop($calendar_info['posts']);
-
-    //print_r($calendar_info);
 
     // ul calendar of pixels comprised of vertical lis of weeks built of more ul of days
     $calendar = '<ul id="patched_up_pixel_calendar">';
@@ -141,6 +148,8 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
   public function widget( $args, $instance ) {
     wp_register_style( 'patchedUpPixelCalendarStylesheet', plugins_url('patched_up_pixel_calendar_style.css', __FILE__) );
     wp_enqueue_style( 'patchedUpPixelCalendarStylesheet' );
+
+    wp_enqueue_script( 'patchedUpPixelCalendarScript', plugins_url('patched_up_pixel_calendar_script.js', __FILE__), array('jquery') );
 
     $title = apply_filters( 'widget_title', $instance['title'] );
 
