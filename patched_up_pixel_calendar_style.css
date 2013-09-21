@@ -1,4 +1,4 @@
-.widget_patched_up_pixel_calendar { text-align:center; }
+.widget_patched_up_pixel_calendar {  box-sizing: border-box; text-align:center; }
 
 .widget-title { text-align: left; }
 
@@ -18,8 +18,9 @@
   box-sizing: border-box;
   display:block; clear:both; 
   width:5px; height:5px;
-  margin-bottom: 1px !important; 
+  margin: 0px !important; 
   border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
   background-color: rgba(0,0,0,0.1);
 }
 
@@ -27,7 +28,7 @@
   box-sizing: border-box;
   display:block; clear:both; 
   width:5px; height:5px;
-  margin-bottom: 1px !important; 
+  margin-bottom: 0px !important; 
   background-color: #fff;
   opacity: 0.1;
 }
@@ -43,6 +44,7 @@
 .patched_up_pixel_calendar_day.tooltip a { 
   display: block;
   width: 100%; height: 100%;
+  text-decoration: none; border: none;
 }
 .patched_up_pixel_calendar_day.tooltip a:hover { background-color: rgba(255,0,0,1); }
 
