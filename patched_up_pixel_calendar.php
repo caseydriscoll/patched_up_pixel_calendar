@@ -32,7 +32,7 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
       $tooltip .= '<span>';
 
       while ( $calendar_info['current_post']['date'] == $calendar_info['dayoftheyear'] ) {
-        $tooltip .= $calendar_info['current_post']['title'] . '<br />';
+        $tooltip .= '<p>' . $calendar_info['current_post']['title'] . '</p>';
         $calendar_info['current_post'] = array_pop($calendar_info['posts']);
 
         $numberofposts++;
