@@ -8,11 +8,13 @@
 }
 
 .patched_up_pixel_calendar_week { 
+  box-sizing: border-box;
   display:block; float:left; 
   width:5px; height:30px; 
 }
 
 .patched_up_pixel_calendar_day {
+  box-sizing: border-box;
   display:block; clear:both; 
   width:5px; height:4px;
   margin-bottom: 1px !important; 
@@ -42,7 +44,7 @@
   width: 150px;
   padding: 5px 5px 0 5px; margin: 20px 0 0 -75px ;
   font-size: 12px;
-  line-height: 18px;
+  line-height: 15px;
   color:#111;
   border: 1px solid #000; 
   background: #ffffff;
