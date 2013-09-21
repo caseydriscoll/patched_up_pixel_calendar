@@ -3,7 +3,7 @@
 .widget-title { text-align: left; }
 
 #patched_up_pixel_calendar { 
-  box-sizing: border-box;
+  position: relative;
   /*width: 265px;*/
   width: 100%;
   margin: 0 auto; 
