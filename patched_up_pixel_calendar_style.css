@@ -5,7 +5,7 @@
 #patched_up_pixel_calendar { 
   position: relative;
   /*width: 265px;*/
-  width: 100%;
+  width: 100%; height: auto;
   margin: 0 auto; 
 }
 
