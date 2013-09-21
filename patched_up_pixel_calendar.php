@@ -133,6 +133,8 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
 
         $calendar .= '</ul>';
       
+      $calendar .= '<br style="clear:both;" />';
+
       $calendar .= '</li>';
     }
     
@@ -141,7 +143,6 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     //wp_cache_set( 'patched_up_pixel_calendar', $calendar );
     //$calendar = wp_cache_get( 'patched_up_pixel_calendar' );
 
-    $calendar .= '<br style="clear:both;" />';
 
     return $calendar;
   }
