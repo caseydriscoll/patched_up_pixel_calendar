@@ -35,13 +35,14 @@
 /* Tooltip */
 
 .patched_up_pixel_calendar_day.tooltip {
-  text-align: center;
+  text-align: left;
 }
 .patched_up_pixel_calendar_day.tooltip span {
   z-index: 10; display: none; 
-  width: 200px;
+  max-width: 200px;
   padding: 5px; margin: 20px 0 0 -100px ;
   font-size: 12px;
+  line-height: 18px;
   color:#111;
   border: 1px solid #000; 
   background: #ffffff;
