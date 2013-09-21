@@ -14,6 +14,8 @@
   width:5px; height:30px; 
 }
 
+.patched_up_pixel_calendar_week ul { margin: 0px !important; } 
+  
 .patched_up_pixel_calendar_day {
   box-sizing: border-box;
   display:block; clear:both; 
