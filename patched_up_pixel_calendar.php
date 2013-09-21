@@ -29,7 +29,7 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     $tooltip = '';
 
     if ( $calendar_info['current_post']['date'] == $calendar_info['dayoftheyear'] ) {
-      $tooltip .= '<span>';
+      $tooltip .= '<a href="?m=' . $calendar_info['current_post']['day'] . '"></a><span>';
 
       while ( $calendar_info['current_post']['date'] == $calendar_info['dayoftheyear'] ) {
         $tooltip .= '<p>' . $calendar_info['current_post']['title'] . '</p>';
@@ -83,7 +83,8 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
 
       $post = [];
       $post['title'] = get_the_title();
-      $post['date'] = get_the_date('z');
+      $post['day']   = get_the_date('Ymd');
+      $post['date']  = get_the_date('z');
 
       // index current post date if a year started 365 days ago
       if ( $post['date'] > date('z') )
