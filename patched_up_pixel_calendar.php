@@ -16,24 +16,38 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     );
   }
 
-  public function widget( $args, $instance ) {
-    wp_register_style( 'patchedUpPixelCalendarStylesheet', plugins_url('patched_up_pixel_calendar_style.css', __FILE__) );
-    wp_enqueue_style( 'patchedUpPixelCalendarStylesheet' );
+  public static function filter_where( $where = '' ) {
+    $today= date("Y-m-d", mktime(0, 0, 0, date("m"),   date("d") + 1,   date("Y")) );
+    $yesteryear = date("Y-m-d", mktime(0, 0, 0, date("m"),   date("d"),   date("Y") - 1) );
+    $where .= " AND post_date > '" . $yesteryear . "' AND post_date <= '" . $today . "'";
+    return $where;
+  }
 
-    $title = apply_filters( 'widget_title', $instance['title'] );
+  public function build_pixel($calendar_info) {
+    $calendar_info['pixel'] = '<li title="';
+    $numberofposts = 0;
 
-    echo $args['before_widget'];
+    while ( $calendar_info['current_post']['date'] == $calendar_info['dayoftheyear'] ) {
+      $calendar_info['pixel'].= $calendar_info['current_post']['title'];
+      $calendar_info['current_post'] = array_pop($calendar_info['posts']);
 
-    if ( !empty($title) )
-      echo $args['before_title'] . $title . $args['after_title'];
-
-    function filter_where( $where = '' ) {
-      $today= date("Y-m-d", mktime(0, 0, 0, date("m"),   date("d") + 1,   date("Y")) );
-      $yesteryear = date("Y-m-d", mktime(0, 0, 0, date("m"),   date("d"),   date("Y") - 1) );
-      $where .= " AND post_date > '" . $yesteryear . "' AND post_date <= '" . $today . "'";
-      return $where;
+      $numberofposts++;
     }
 
+    $calendar_info['pixel'] .= '" class="patched_up_pixel_calendar_day'; 
+
+    if ( $numberofposts > 0 )
+      $calendar_info['pixel'] .= ' someposts'; 
+
+    $calendar_info['pixel'] .= '"></li>';
+
+    $calendar_info['dayoftheyear']++;
+
+    return $calendar_info;
+  }
+
+  public function build_calendar() {
+    $calendar_info = array(); // A list of passable info to build_pixel()
     $query_string = array( 
       'post_type' => 'post', 
       'posts_per_page' => '-1',
@@ -41,28 +55,37 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
       'order_by' => 'date',
       'order' => 'ASC' 
     );
-    add_filter( 'posts_where', 'filter_where' );
+    add_filter( 'posts_where', array('Patched_Up_Pixel_Calendar', 'filter_where' ));
     $calendar_query = new WP_Query( $query_string );
     remove_filter( 'posts_where', 'filter_where' );
 
-    //while ( $calendar_query->have_posts() ) {
-      //$calendar_query->the_post();
-      //if ( get_the_date('z') > date('z') )
-        //echo get_the_title() . ' ' . get_the_date('z') . ' - ' . date('z') . ' = ' .  (get_the_date('z') - date('z')) . '<br />';
-      //else
-        //echo get_the_title() . ' ' . get_the_date('z') . ' + ' . date('z') . ' = ' .  (365 - date('z') + get_the_date('z')) . '<br />';
-    //}
+    $calendar_info['posts'] = array();
+    $calendar_info['dayoftheyear'] = 1;
+    $calendar_info['dayoftheweek'] = date('w') + 1;
+    $calendar_info['pixel'] = '';
 
-    // ul calendar of pixels
+    while ( $calendar_query->have_posts() ) {
+      $calendar_query->the_post();
+
+      $post = [];
+      $post['title'] = get_the_title();
+      $post['date'] = get_the_date('z');
+
+      // index current post date if a year started 365 days ago
+      if ( $post['date'] > date('z') )
+        $post['date'] = $post['date'] - date('z');
+      else
+        $post['date'] = 365 - date('z') + $post['date'];
+
+      array_push($calendar_info['posts'], $post);
+    }
+    $calendar_info['posts'] = array_reverse($calendar_info['posts']);
+    $calendar_info['current_post'] = array_pop($calendar_info['posts']);
+
+    //print_r($calendar_info);
+
+    // ul calendar of pixels comprised of vertical lis of weeks built of more ul of days
     $calendar = '<ul id="patched_up_pixel_calendar">';
-
-    $calendar_query->the_post();
-    $postdayoftheyear = (get_the_date('z') - date('z')); // an index for the current post date if a year started 365 days ago
-
-    $dayoftheyear = 1;
-    $dayoftheweek = date('w') + 1;
-
-    $numberofposts = 0;
 
     for ( $week = 0 ; $week < 53 ; $week++ ) { // for 53 partial weeks
       $calendar .= '<li class="patched_up_pixel_calendar_week">';
@@ -70,72 +93,29 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
         $calendar .= '<ul>';  
 
         if ( $week == 0 ) { // Front Case
-          // empty spots equals 7 - (365 - days in last week - 51 solid weeks * 7 days)
-          $blankdays = 7 - (365 - $dayoftheweek - (51 * 7));
+          $blankdays = 7 - (365 - $calendar_info['dayoftheweek'] - (51 * 7));
           
-          for ( $i = 0 ; $i < $blankdays ; $i++ ) {
-            $calendar .= '<li class="patched_up_pixel_calendar_blankday"></li>';
-          }
+          for ( $i = 0 ; $i < $blankdays ; $i++ ) $calendar .= '<li class="patched_up_pixel_calendar_blankday"></li>';
 
           for ( $day = $blankdays ; $day < 7 ; $day++ ) {
-            $calendar .= '<li title="';
-            $numberofposts = 0;
-            while ( $postdayoftheyear == $dayoftheyear ) {
-              $calendar .= get_the_title();
-              $calendar_query->the_post();
-              if ( get_the_date('z') > date('z') )
-                $postdayoftheyear = get_the_date('z') - date('z');
-              else
-                $postdayoftheyear = 365 - date('z') + get_the_date('z');
-              $numberofposts++;
-            }
-            $calendar .= '" class="patched_up_pixel_calendar_day'; 
-            if ( $numberofposts > 0 )
-              $calendar .= ' someposts'; 
-
-            $calendar .= '"></li>';
-            $dayoftheyear++;
+            $calendar_info = $this->build_pixel($calendar_info);
+            $calendar .= $calendar_info['pixel'];
           }
+        
         } elseif ( $week == 52 ) { // Back Case
-          for ( $day = 0 ; $day < $dayoftheweek ; $day++ ) {
-            $calendar .= '<li title="';
-            $numberofposts = 0;
-            while ( $postdayoftheyear == $dayoftheyear ) {
-              $calendar .= get_the_title();
-              $calendar_query->the_post();
-              if ( get_the_date('z') > date('z') )
-                $postdayoftheyear = get_the_date('z') - date('z');
-              else
-                $postdayoftheyear = 365 - date('z') + get_the_date('z');
-              $numberofposts++;
-            }
-            $calendar .= '" class="patched_up_pixel_calendar_day'; 
-            if ( $numberofposts > 0 )
-              $calendar .= ' someposts'; 
 
-            $calendar .= '"></li>';
-            $dayoftheyear++;
+          for ( $day = 0 ; $day < $calendar_info['dayoftheweek'] ; $day++ ) {
+            $calendar_info = $this->build_pixel($calendar_info);
+            $calendar .= $calendar_info['pixel'];
           }
+        
         } else { // Middle Case
-          for ( $day = 0 ; $day < 7 ; $day++ ) {
-            $calendar .= '<li title="';
-            $numberofposts = 0;
-            while ( $postdayoftheyear == $dayoftheyear ) {
-              //$calendar .= get_the_title();
-              $calendar_query->the_post();
-              if ( get_the_date('z') > date('z') )
-                $postdayoftheyear = get_the_date('z') - date('z');
-              else
-                $postdayoftheyear = 365 - date('z') + get_the_date('z');
-              $numberofposts++;
-            }
-            $calendar .= '" class="patched_up_pixel_calendar_day'; 
-            if ( $numberofposts > 0 )
-              $calendar .= ' someposts'; 
 
-            $calendar .= '"></li>';
-            $dayoftheyear++;
+          for ( $day = 0 ; $day < 7 ; $day++ ) {
+            $calendar_info = $this->build_pixel($calendar_info);
+            $calendar .= $calendar_info['pixel'];
           }
+
         }   
 
         $calendar .= '</ul>';
@@ -148,9 +128,26 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     //wp_cache_set( 'patched_up_pixel_calendar', $calendar );
     //$calendar = wp_cache_get( 'patched_up_pixel_calendar' );
 
-    echo $calendar;
+    $calendar .= '<br style="clear:both;" />';
 
-    echo '<br style="clear:both;" />';
+    return $calendar;
+  }
+
+  public function widget( $args, $instance ) {
+    wp_register_style( 'patchedUpPixelCalendarStylesheet', plugins_url('patched_up_pixel_calendar_style.css', __FILE__) );
+    wp_enqueue_style( 'patchedUpPixelCalendarStylesheet' );
+
+    $title = apply_filters( 'widget_title', $instance['title'] );
+
+    echo $args['before_widget'];
+
+    if ( !empty($title) )
+      echo $args['before_title'] . $title . $args['after_title'];
+
+
+    $calendar = $this->build_calendar();
+
+    echo $calendar;
 
     echo $args['after_widget'];
   }
