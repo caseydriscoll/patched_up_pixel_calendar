@@ -30,6 +30,7 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
 
     if ( $calendar_info['current_post']['date'] == $calendar_info['dayoftheyear'] ) {
       $tooltip .= '<a href="?m=' . $calendar_info['current_post']['day'] . '"></a><span>';
+      $tooltip .= '<strong>' . $calendar_info['current_post']['print_date'] . '</strong>';
 
       while ( $calendar_info['current_post']['date'] == $calendar_info['dayoftheyear'] ) {
         $tooltip .= '<p>' . $calendar_info['current_post']['title'] . '</p>';
@@ -85,6 +86,7 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
       $post['title'] = get_the_title();
       $post['day']   = get_the_date('Ymd');
       $post['date']  = get_the_date('z');
+      $post['print_date'] = get_the_date();
 
       // index current post date if a year started 365 days ago
       if ( $post['date'] > date('z') )
@@ -97,8 +99,18 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     $calendar_info['posts'] = array_reverse($calendar_info['posts']);
     $calendar_info['current_post'] = array_pop($calendar_info['posts']);
 
+    $calendar = '';
+
+    // A list of the months across the top
+    $calendar .= '<ul class="patched_up_pixel_calendar_months">';
+
+    for ( $i = 0 ; $i < 12 ; $i++ )
+      $calendar .= '<li>' . date('M', mktime(0, 0, 0, date('m')+$i+2, 0, 0)) . '</li>';
+
+    $calendar .= '</ul>';
+
     // ul calendar of pixels comprised of vertical lis of weeks built of more ul of days
-    $calendar = '<ul id="patched_up_pixel_calendar">';
+    $calendar .= '<ul id="patched_up_pixel_calendar">';
 
     for ( $week = 0 ; $week < 53 ; $week++ ) { // for 53 partial weeks
       $calendar .= '<li class="patched_up_pixel_calendar_week">';
@@ -139,6 +151,7 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     }
     
     $calendar .= '</ul>';
+
 
     //wp_cache_set( 'patched_up_pixel_calendar', $calendar );
     //$calendar = wp_cache_get( 'patched_up_pixel_calendar' );
