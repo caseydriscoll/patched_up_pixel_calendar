@@ -145,8 +145,6 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
 
         $calendar .= '</ul>';
       
-      $calendar .= '<br style="clear:both;" />';
-
       $calendar .= '</li>';
     }
     
@@ -179,10 +177,10 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
   }
 
   public function widget( $args, $instance ) {
-    wp_register_style( 'patchedUpPixelCalendarStylesheet', plugins_url('patched_up_pixel_calendar_style.css', __FILE__) );
+    wp_register_style( 'patchedUpPixelCalendarStylesheet', plugins_url('css/widget.css', __FILE__) );
     wp_enqueue_style( 'patchedUpPixelCalendarStylesheet' );
 
-    wp_enqueue_script( 'patchedUpPixelCalendarScript', plugins_url('patched_up_pixel_calendar_script.js', __FILE__), array('jquery') );
+    wp_enqueue_script( 'patchedUpPixelCalendarScript', plugins_url('js/widget.js', __FILE__), array('jquery') );
 
     $title = apply_filters( 'widget_title', $instance['title'] );
     $color = $this->hex2rgb($instance['color']);
