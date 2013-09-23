@@ -61,7 +61,9 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     return $calendar_info;
   }
 
-  public function build_calendar() {
+  public function build_calendar($style) {
+    extract($style);
+
     $calendar_info = array(); // A list of passable info to build_pixel()
     $query_string = array( 
       'post_type' => 'post', 
@@ -99,7 +101,8 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     $calendar_info['posts'] = array_reverse($calendar_info['posts']);
     $calendar_info['current_post'] = array_pop($calendar_info['posts']);
 
-    $calendar = '';
+    $calendar =  '<!-- Patched Up Pixel Calendar by Casey Patrick Driscoll of Patched Up Creative 2013 -->';
+    $calendar .= '<!--   caseypatrickdriscoll.com  ---  patchedupcreative.com/plugins/pixel-calendar   -->';
 
     // A list of the months across the top
     $calendar .= '<ul class="patched_up_pixel_calendar_months">';
@@ -150,12 +153,17 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     
     $calendar .= '</ul>';
 
+    $calendar .= '
+      <style type="text/css">
+        .patched_up_pixel_calendar_day                 { background-color: rgba(' . $color . ',0.1); }  
+        .patched_up_pixel_calendar_day.onepost         { background-color: rgba(' . $color . ',0.4); }
+        .patched_up_pixel_calendar_day.twoposts        { background-color: rgba(' . $color . ',0.7); }
+        .patched_up_pixel_calendar_day.manyposts       { background-color: rgba(' . $color . ',1.0); }
+        .patched_up_pixel_calendar_day.tooltip a:hover { background-color: rgba(' . $hovercolor . ',1.0); }
+      </style>
+    ';
 
-    //wp_cache_set( 'patched_up_pixel_calendar', $calendar );
-    //$calendar = wp_cache_get( 'patched_up_pixel_calendar' );
-
-
-    return $calendar;
+    set_transient( 'patched_up_pixel_calendar', $calendar, DAY_IN_SECONDS );
   }
 
   // Thanks to http://bavotasan.com/2011/convert-hex-color-to-rgb-using-php/
@@ -173,7 +181,6 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     }
     $rgb = array($r, $g, $b);
     return implode(",", $rgb); // returns the rgb values separated by commas
-    //return $rgb; // returns an array with the rgb values
   }
 
   public function widget( $args, $instance ) {
@@ -183,31 +190,23 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     wp_enqueue_script( 'patchedUpPixelCalendarScript', plugins_url('js/widget.js', __FILE__), array('jquery') );
 
     $title = apply_filters( 'widget_title', $instance['title'] );
-    $color = $this->hex2rgb($instance['color']);
-    $hovercolor = $this->hex2rgb($instance['hovercolor']);
+    $style = [ 'color'      => $this->hex2rgb($instance['color']),
+               'hovercolor' => $this->hex2rgb($instance['hovercolor']) ];
 
-    if ( !isset( $color ) ) $color = $this->hex2rgb( '000000' );
+    if ( !isset( $style['color'] ) ) $style['color'] = $this->hex2rgb( '000000' );
 
     echo $args['before_widget'];
 
     if ( !empty($title) )
       echo $args['before_title'] . $title . $args['after_title'];
 
-    $calendar =  '<!-- Patched Up Pixel Calendar by Casey Patrick Driscoll of Patched Up Creative 2013 -->';
-    $calendar .= '<!--   caseypatrickdriscoll.com  ---  patchedupcreative.com/plugins/pixel-calendar   -->';
+    $calendar = get_transient( 'patched_up_pixel_calendar' );
 
-    $calendar .= '
-      <style type="text/css">
-        .patched_up_pixel_calendar_day                 { background-color: rgba(' . $color . ',0.1); }  
-        .patched_up_pixel_calendar_day.onepost         { background-color: rgba(' . $color . ',0.4); }
-        .patched_up_pixel_calendar_day.twoposts        { background-color: rgba(' . $color . ',0.7); }
-        .patched_up_pixel_calendar_day.manyposts       { background-color: rgba(' . $color . ',1.0); }
-        .patched_up_pixel_calendar_day.tooltip a:hover { background-color: rgba(' . $hovercolor . ',1.0); }
-      </style>
-    ';
+    if ( !$calendar )
+      $this->build_calendar($style);
 
-    $calendar .= $this->build_calendar();
-
+    $calendar = get_transient( 'patched_up_pixel_calendar' );
+    
     echo $calendar;
 
     echo $args['after_widget'];
@@ -253,12 +252,19 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     $instance['title'] = strip_tags($new_instance['title']);
     $instance['color'] = strip_tags($new_instance['color']);
     $instance['hovercolor'] = strip_tags($new_instance['hovercolor']);
-    return $instance;
 
+    delete_transient('patched_up_pixel_calendar');
+  
+    return $instance;
   }
 
 
 }
+
+function delete_transient_calendar_on_post_save() {
+  delete_transient('patched_up_pixel_calendar');
+}
+add_action( 'save_post', 'delete_transient_calendar_on_post_save' );
 
 function register_patched_up_pixel_calendar_widget() {
   register_widget( 'Patched_Up_Pixel_Calendar' );
