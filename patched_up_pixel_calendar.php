@@ -29,7 +29,7 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     $tooltip = '';
 
     if ( $calendar_info['current_post']['date'] == $calendar_info['dayoftheyear'] ) {
-      $tooltip .= '<a href="?m=' . $calendar_info['current_post']['day'] . '"></a><span>';
+      $tooltip .= '<a href="/?m=' . $calendar_info['current_post']['day'] . '"></a><span>';
       $tooltip .= '<strong>' . $calendar_info['current_post']['print_date'] . '</strong>';
 
       while ( $calendar_info['current_post']['date'] == $calendar_info['dayoftheyear'] ) {
