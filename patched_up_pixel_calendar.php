@@ -160,6 +160,24 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     return $calendar;
   }
 
+  // Thanks to http://bavotasan.com/2011/convert-hex-color-to-rgb-using-php/
+  function hex2rgb($hex) {
+    $hex = str_replace("#", "", $hex);
+
+    if(strlen($hex) == 3) {
+      $r = hexdec(substr($hex,0,1).substr($hex,0,1));
+      $g = hexdec(substr($hex,1,1).substr($hex,1,1));
+      $b = hexdec(substr($hex,2,1).substr($hex,2,1));
+    } else {
+      $r = hexdec(substr($hex,0,2));
+      $g = hexdec(substr($hex,2,2));
+      $b = hexdec(substr($hex,4,2));
+    }
+    $rgb = array($r, $g, $b);
+    return implode(",", $rgb); // returns the rgb values separated by commas
+    //return $rgb; // returns an array with the rgb values
+  }
+
   public function widget( $args, $instance ) {
     wp_register_style( 'patchedUpPixelCalendarStylesheet', plugins_url('patched_up_pixel_calendar_style.css', __FILE__) );
     wp_enqueue_style( 'patchedUpPixelCalendarStylesheet' );
@@ -167,14 +185,30 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
     wp_enqueue_script( 'patchedUpPixelCalendarScript', plugins_url('patched_up_pixel_calendar_script.js', __FILE__), array('jquery') );
 
     $title = apply_filters( 'widget_title', $instance['title'] );
+    $color = $this->hex2rgb($instance['color']);
+    $hovercolor = $this->hex2rgb($instance['hovercolor']);
+
+    if ( !isset( $color ) ) $color = $this->hex2rgb( '000000' );
 
     echo $args['before_widget'];
 
     if ( !empty($title) )
       echo $args['before_title'] . $title . $args['after_title'];
 
+    $calendar =  '<!-- Patched Up Pixel Calendar by Casey Patrick Driscoll of Patched Up Creative 2013 -->';
+    $calendar .= '<!--   caseypatrickdriscoll.com  ---  patchedupcreative.com/plugins/pixel-calendar   -->';
 
-    $calendar = $this->build_calendar();
+    $calendar .= '
+      <style type="text/css">
+        .patched_up_pixel_calendar_day                 { background-color: rgba(' . $color . ',0.1); }  
+        .patched_up_pixel_calendar_day.onepost         { background-color: rgba(' . $color . ',0.4); }
+        .patched_up_pixel_calendar_day.twoposts        { background-color: rgba(' . $color . ',0.7); }
+        .patched_up_pixel_calendar_day.manyposts       { background-color: rgba(' . $color . ',1.0); }
+        .patched_up_pixel_calendar_day.tooltip a:hover { background-color: rgba(' . $hovercolor . ',1.0); }
+      </style>
+    ';
+
+    $calendar .= $this->build_calendar();
 
     echo $calendar;
 
@@ -182,10 +216,46 @@ class Patched_Up_Pixel_Calendar extends WP_Widget {
   }
 
   public function form( $instance ) {
+    if ( isset($instance) ) extract($instance);
+
+  ?>
+    <p>
+      <label for="<?php echo $this->get_field_id('title');?>">Title:</label> 
+      <input  type="text"
+              class="widefat"
+              id="<?php echo $this->get_field_id('title'); ?>"
+              name="<?php echo $this->get_field_name('title'); ?>"
+              value="<?php if ( isset($title) ) echo esc_attr($title); ?>" />
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('color');?>">Pixel Base Color:</label> 
+      <input  type="text"
+              class="widefat"
+              id="<?php echo $this->get_field_id('color'); ?>"
+              name="<?php echo $this->get_field_name('color'); ?>"
+              maxlength="6"
+              value="<?php if ( isset($color) ) echo esc_attr($color); ?>" />
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('hovercolor');?>">Pixel Hover Color:</label> 
+      <input  type="text"
+              class="widefat"
+              id="<?php echo $this->get_field_id('hovercolor'); ?>"
+              name="<?php echo $this->get_field_name('hovercolor'); ?>"
+              maxlength="6"
+              value="<?php if ( isset($hovercolor) ) echo esc_attr($hovercolor); ?>" />
+    </p>
+    <?php
 
   }
 
   public function update( $new_instance, $old_instance ) {
+    $instance = $old_instance;
+    // Fields
+    $instance['title'] = strip_tags($new_instance['title']);
+    $instance['color'] = strip_tags($new_instance['color']);
+    $instance['hovercolor'] = strip_tags($new_instance['hovercolor']);
+    return $instance;
 
   }
 
