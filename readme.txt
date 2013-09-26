@@ -27,7 +27,13 @@ Installation is very simple
 1. Upload the 'patched_up_pixel_calendar/' folder to the '/wp-content/plugins/' directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Drag widget into widget section to finish install
-4. Customize calendar pixel colors with hexidecimal color codes in the widget form
+4. Customize calendar pixel colors with six digit hexidecimal color codes in the widget form
+
+== Changelog ==
+
+= 1.0.0 =
+
+Initial release.
 
 
 
