@@ -6,10 +6,8 @@
   box-sizing: border-box; 
 }
 
-.widget-title { text-align: left; }
-
 .patched_up_pixel_calendar_months {
-  display: none; 
+  display: none; /* Feature I'm hoping to add later. Hidden for now */
   position: absolute;
   width: 100%;
   font-size: 1rem;
@@ -22,28 +20,30 @@
     padding: 0;
   }
 
+/* CLEVER TRICK ALERT */
+/* Turns out, for responsive and proportional designs,
+ * setting height:0; a percentage padding-bottom will
+ * make the height equal to a percent of the width.
+ * Neat!
+ */
 #patched_up_pixel_calendar { 
   width: 100%; height: 0; 
   padding: 0 0 15% 0; margin: 0 auto; 
 }
 
-#patched_up_pixel_calendar:hover ~ .patched_up_pixel_calendar_months {
-  /*display: block;*/
-}
-
 .patched_up_pixel_calendar_week { 
   display:block; float:left;
-  width:1.886792453%; height:0; 
-  padding: 0 0 13.207547171% 0; 
+  width: 1.886792453%; height:0; /* Roughly 1/53 of 100% */
+  padding: 0 0 13.207547171% 0; /* Roughly 1/7 of 100% */
 }
 
 .patched_up_pixel_calendar_week ul { margin: 0 !important; } 
   
 .patched_up_pixel_calendar_day {
   display: block; clear:both; 
-  width:100%; height: 0;
-  padding: 0 0 100% 0 !important; margin: 0px !important; 
-  border-right: 1px solid #ffffff;
+  width:100%; height: 0; /* Expands to fill week, padding makes it 'square' */
+  padding: 0 0 100% 0 !important; margin: 0px !important; /* not perfect squares on low numbers */
+  border-right: 1px solid #ffffff; /* Border instead of margin sets cleaner design and bigger target */
   border-bottom: 1px solid #ffffff;
 }
 
@@ -58,8 +58,6 @@
 }
 
 /* Tooltip */
-
-.patched_up_pixel_calendar_day.tooltip { }
 
 .patched_up_pixel_calendar_day.tooltip a { 
   display: block;
@@ -97,7 +95,7 @@
   
 }
     
-/*CSS3 extras*/
+/* CSS3 extras */
 .patched_up_pixel_calendar_day.tooltip span
 {
     border-radius:2px;

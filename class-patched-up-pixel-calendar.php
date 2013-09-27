@@ -17,8 +17,10 @@
  *      'dayoftheweek' <= a number between 1 and 7 that represents the current day of the week
  *      'calendar'     <= the html output of the calendar
  *
+ *    == 1.0 QUERY FOR THE CALENDAR ==
+ *    
  *    build_calendar() runs a WP_Query() for all posts from the last 365 days (as filtered by filter_where())
- *
+ *    
  *    build_calendar() runs through each post of the query, 
  *      grabbing only the title while making three versions of the_date()
  *      Each 'post' in the array includes these:
@@ -42,8 +44,11 @@
  *    Once the 'index_date' of the 'post' is refactored, it is added to the $this->posts array 
  *    Every post is fitlered this way and the original query results are discarded
  *
+ *    == 2.0 CONSTRUCT THE CALENDAR HTML ==
+ *
  *    Now we have an array of posts and it is time to construct the html.
  *    The array is reversed so that we may quickly pop() each post off as we traverse the array.
+ *    Cycle through all the weeks and build_pixel() for every day
  *
  *    The html of the calendar looks roughly like this:
  *
@@ -52,7 +57,7 @@
  *          <ul>
  *            <li class="patched_up_pixel_calendar_day">
  *              <a href="?m=['slug_date']">
- *                <span>
+ *                <span> <- tooltip that is activated on hover
  *                  <strong>['post']['print_date']</strong>
  *                  <p>['post]['title']</p>
  *                  .
@@ -70,6 +75,17 @@
  *        . (times 53 weeks per year)
  *        .
  *      </ul>
+ *
+ *
+ *     == 3.0 STYLING INFORMATION ==
+ *
+ *     The color of each pixel is controlled by the opacity (the bg color controlled by the user)
+ *
+ *     For now there are three levels of intensity, although that might change in the future.
+ *
+ *     I would like to just dynamically change the color of the background,
+ *      but from what I can tell with rgba opacity the whole line needs to be updated.
+ *
 */
 
 
@@ -90,7 +106,7 @@ class Patched_Up_Pixel_Calendar {
   private function build_calendar($style) {
     extract($style);
 
-    /* Query for the calendar */
+    /* 1.0 QUERY FOR THE CALENDAR */
     $query_string = array( 
       'post_type' => 'post', 
       'posts_per_page' => '-1',
@@ -107,23 +123,24 @@ class Patched_Up_Pixel_Calendar {
 
       $post = [];
       $post['title'] = get_the_title();
-      $post['index_date'] = get_the_date('z');
-      $post['slug_date']  = get_the_date('Ymd');
-      $post['print_date'] = get_the_date();
+      $post['index_date'] = get_the_date('z');    // numbered day of the year 1 - 365 
+      $post['slug_date']  = get_the_date('Ymd');  // WP slug format for day archive link (20130927)
+      $post['print_date'] = get_the_date();       // What the user actually reads
 
-      // index current post date if a year started 365 days ago
-      if ( $post['index_date'] > date('z') )
-        $post['index_date'] = $post['index_date'] - date('z');
-      else
-        $post['index_date'] = 365 - date('z') + $post['index_date'];
+      // index current post date if a year started 365 days ago (clever maths)
+      if ( $post['index_date'] > date('z') ) // if it happened after this day last year
+        $post['index_date'] = $post['index_date'] - date('z'); // it's simply the remainder on the year
+      else // otherwise it's before the current day, and more hairy. 365 - date is last number of last year
+        $post['index_date'] = 365 - date('z') + $post['index_date']; // and then add the lower date number
 
-      array_push($this->posts, $post);
+      array_push($this->posts, $post); // push it to the array
     }
-    $this->posts = array_reverse($this->posts);
+    $this->posts = array_reverse($this->posts); // reversed for quick access to the bottom of the stack
+    /* End 1.0 QUERY FOR THE CALENDAR */
 
 
 
-    /* Construct the calendar html */
+    /* 2.0 CONSTRUCT THE CALENDAR HTML */
     // Quick contact information about the plugin
     $calendar =  '<!-- Patched Up Pixel Calendar by Casey Patrick Driscoll of Patched Up Creative 2013 -->';
     $calendar .= '<!--   caseypatrickdriscoll.com  ---  patchedupcreative.com/plugins/pixel-calendar   -->';
@@ -136,7 +153,6 @@ class Patched_Up_Pixel_Calendar {
 
     // ul calendar of pixels comprised of vertical lis of weeks built of more ul of days
     $calendar .= '<ul id="patched_up_pixel_calendar">';
-
 
     // There are three cases to consider when constructing each week:
     //    Front Case: The first week (with blank initial days)
@@ -172,17 +188,20 @@ class Patched_Up_Pixel_Calendar {
       $calendar .= '</li>';
     }
     $calendar .= '</ul>';
-    // End Construct Calendar
+    // End 2.0 CONSTRUCT THE CALENDAR HTML */
 
 
 
+    /* 3.0 STYLING INFORMATION */
+    // Would style in an external sheet, just not sure how to do that dynmically in WP Plugins quite yet
     if ( !isset( $color ) ) 
-      $color = hex2rgb( '000000' );
+      $color = hex2rgb( '000000' ); // Set the default color to black
     else
       $color = $this->hex2rgb($color);
     
     $hovercolor = $this->hex2rgb($hovercolor);
 
+    // color intesifies opacity with every added post. AFAIK can't control bg opacity by itself.
     $calendar .= '
       <style type="text/css">
         .patched_up_pixel_calendar_day                 { background-color: rgba(' . $color . ',0.1); }  
@@ -192,34 +211,37 @@ class Patched_Up_Pixel_Calendar {
         .patched_up_pixel_calendar_day.tooltip a:hover { background-color: rgba(' . $hovercolor . ',1.0); }
       </style>
     ';
+    /* End 3.0 STYLING INFORMATION */
 
     return $calendar;
   }
 
+  // This function builds the 'pixel' for the calendar, returning a <li> of posts
   private function build_pixel() {
-    $current_post = array_pop($this->posts);
-    $pixel = '<li class="patched_up_pixel_calendar_day';
-    $numberofposts = 0;
-    $tooltip = '';
+    $current_post = array_pop($this->posts); // Peeking for now, will add it back on it a bit
+    $pixel = '<li class="patched_up_pixel_calendar_day'; // leave class open to add more in a bit
+    $numberofposts = 0; // used for deciding the color intensity of the pixel
 
+    // Skip if this day should be blank, otherwise fill it with a tooltip that activates on hover
+    $tooltip = '';
     if ( $current_post['index_date'] == $this->dayoftheyear ) {
       $tooltip .= '<a href="/?m=' . $current_post['slug_date'] . '"></a><span>';
-      $tooltip .= '<strong>' . $current_post['print_date'] . '</strong>';
+      $tooltip .= '<strong>' . $current_post['print_date'] . '</strong>'; // add the date only once
 
-      while ( $current_post['index_date'] == $this->dayoftheyear ) {
+      while ( $current_post['index_date'] == $this->dayoftheyear ) { // but then add every pertinent title
         $tooltip .= '<p>' . $current_post['title'] . '</p>';
         $current_post = array_pop($this->posts);
 
-        $numberofposts++;
+        $numberofposts++; // used later for adding color to the pixel
       }
 
-      $tooltip .= '</span>';
+      $tooltip .= '</span>'; // finish the tooltip
     } 
 
-    // Since there is no peek we have to push on the currently used post to restore it.
+    // Since there is no peek we have to push on the currently used post to restore the array.
     array_push($this->posts, $current_post);
    
-
+    // Add a class to show how many posts there are to identify the opacity in styling
     if ( $numberofposts == 0 )
       $pixel .= '">';
     elseif ( $numberofposts == 1 )
@@ -229,10 +251,9 @@ class Patched_Up_Pixel_Calendar {
     elseif ( $numberofposts >= 3 )
       $pixel .= ' tooltip manyposts">'; 
 
-
     $pixel .= $tooltip . '</li>';
 
-    $this->dayoftheyear++;
+    $this->dayoftheyear++; // prepare for the next day
 
     return $pixel;
   }
@@ -254,8 +275,9 @@ class Patched_Up_Pixel_Calendar {
     return implode(",", $rgb); // returns the rgb values separated by commas
   }
 
+  // Quick filter for going back a year in posts
   static function filter_where( $where = '' ) {
-    $today= date("Y-m-d", mktime(0, 0, 0, date("m"),   date("d") + 1,   date("Y")) );
+    $today = date("Y-m-d", mktime(0, 0, 0, date("m"),   date("d") + 1,   date("Y")) );
     $yesteryear = date("Y-m-d", mktime(0, 0, 0, date("m"),   date("d"),   date("Y") - 1) );
     $where .= " AND post_date > '" . $yesteryear . "' AND post_date <= '" . $today . "'";
     return $where;
