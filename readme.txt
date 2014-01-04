@@ -3,7 +3,7 @@ Contributors: caseypatrickdriscoll
 Donate link: http://caseypatrickdriscoll.com
 Tags: widget, calendar, minimalist
 Requires at least: 3.6.1
-Tested up to: 3.6.1
+Tested up to: 3.8
 Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -30,6 +30,10 @@ Installation is very simple
 4. Customize calendar pixel colors with six digit hexidecimal color codes in the widget form
 
 == Changelog ==
+
+= 1.0.3 =
+
+Adds more comments and refactoring
 
 = 1.0.0 =
 
