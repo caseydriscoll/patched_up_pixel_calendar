@@ -6,6 +6,10 @@
   box-sizing: border-box; 
 }
 
+.widget-content .widget_patched_up_pixel_calendar {
+	margin-bottom: 20px; /* Separation for preview on widget admin page */
+}
+
 .patched_up_pixel_calendar_months {
   display: none; /* Feature I'm hoping to add later. Hidden for now */
   position: absolute;

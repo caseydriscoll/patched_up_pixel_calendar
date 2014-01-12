@@ -3,7 +3,7 @@
 /* Plugin Name: Patched Up Pixel Calendar
  * Plugin URI: http://patchedupcreative.com/plugins/pixel-calendar
  * Description: A widget for displaying all your posts as a minimalist raster calendar of 'pixels' similar to Github's 'contribution calendar'
- * Version: 1.0.3
+ * Version: 1.1.0
  * Date: 09-27-2013
  * Author: Casey Patrick Driscoll
  * Author URI: http://caseypatrickdriscoll.com
@@ -22,11 +22,12 @@
  *    a new 'Patched_Up_Pixel_Calendar' is instantiated and saved as a transient in the database. 
  *
  *    The Patched_Up_Pixel_Calendar WP_Query()s the database for all posts from the last year 
- *      (365 days NOT calendar year). 
+ *      (the last 365 days NOT the previous calendar year). 
  *    It then builds a grid calendar of every day, each week divided into a separate semantic <ul> column.
- *    If the day has_post()s, a daily archive link is created and put into the day's <li>.
+ *    If the day has_post()s, a daily archive link is created and put into that day's <li>.
  *    Lastly, styling for coloring the grid is dumped right into the html, 
  *      because I'm not sure how to appropriately do that yet. 
+ *			(I would like to write to an external style sheet)
  *
  *
  * Copyright:
@@ -68,6 +69,8 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
     $style = [ 'color'      => $instance['color'],
                'hovercolor' => $instance['hovercolor'] ];
 
+		update_option('patched_up_pixel_calendar_style', $style);
+
     echo $args['before_widget'];
 
     // If there is a title, print it out 
@@ -78,11 +81,10 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
     // If the 'patched_up_pixel_calendar' transient doesn't exist in the db, make a new one and save it
     // Note the calendar is instantiated with the styles from before.
     if ( !get_transient( 'patched_up_pixel_calendar' ) ) 
-      set_transient( 'patched_up_pixel_calendar', new Patched_Up_Pixel_Calendar($style) );
+			update_transient();
 
     // Either way, now is the time to print out the saved calendar
-    echo  get_transient( 'patched_up_pixel_calendar' );
-    //echo new Patched_Up_Pixel_Calendar($style);
+    echo get_transient( 'patched_up_pixel_calendar' );
     
     echo $args['after_widget'];
   }
@@ -92,6 +94,7 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
     if ( isset($instance) ) extract($instance);
 
   ?>
+		<h3>Settings</h3>
     <p><?php // Standard Title form ?>
       <label for="<?php echo $this->get_field_id('title');?>">Title:</label> 
       <input  type="text"
@@ -118,18 +121,32 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
               maxlength="6"
               value="<?php if ( isset($hovercolor) ) echo esc_attr($hovercolor); ?>" />
     </p>
+		<h3>Preview</h3>
+		<div class="widget_patched_up_pixel_calendar"> 
+			<?php
+    	  if ( !get_transient( 'patched_up_pixel_calendar' ) ) 
+					update_transient();
+
+				echo get_transient( 'patched_up_pixel_calendar' );
+			?>
+		</div>
     <?php
   }
 
   public function update( $new_instance, $old_instance ) {
     $instance = $old_instance;
-    // Fields
+   
+		// Fields
     $instance['title'] = strip_tags($new_instance['title']);
     $instance['color'] = strip_tags($new_instance['color']);
     $instance['hovercolor'] = strip_tags($new_instance['hovercolor']);
 
-    // Every time it is updated, delete the old one so the html is refreshed in the db later
-    delete_transient('patched_up_pixel_calendar');
+    $style = [ 'color'      => $instance['color'],
+               'hovercolor' => $instance['hovercolor'] ];
+
+		update_option('patched_up_pixel_calendar_style', $style);
+
+    update_transient();
   
     return $instance;
   }
@@ -137,12 +154,20 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
 
 }
 
-// Delete the transient on widget update or post change. A 'new' one will be made later now that it is missing.
-function delete_transient_calendar_on_post_save() {
-  delete_transient('patched_up_pixel_calendar');
+function update_transient($style) {
+  set_transient( 'patched_up_pixel_calendar', 
+								 new Patched_Up_Pixel_Calendar(get_option('patched_up_pixel_calendar_style') )
+							 );
 }
-add_action( 'save_post', 'delete_transient_calendar_on_post_save' );
-add_action( 'delete_post', 'delete_transient_calendar_on_post_save' );
+add_action( 'save_post', 'update_transient' );
+add_action( 'delete_post', 'update_transient' );
+
+// Style the preview grid in the widget admin
+function register_patched_up_pixel_calendar_styles() {
+  wp_register_style( 'patchedUpPixelCalendarStylesheet', plugins_url('css/widget.css', __FILE__) );
+  wp_enqueue_style( 'patchedUpPixelCalendarStylesheet' );
+} 
+add_action( 'admin_footer', 'register_patched_up_pixel_calendar_styles' );
 
 // Standard widget registration
 function register_patched_up_pixel_calendar_widget() {
