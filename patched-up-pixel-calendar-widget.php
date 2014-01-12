@@ -3,7 +3,7 @@
 /* Plugin Name: Patched Up Pixel Calendar
  * Plugin URI: http://patchedupcreative.com/plugins/pixel-calendar
  * Description: A widget for displaying all your posts as a minimalist raster calendar of 'pixels' similar to Github's 'contribution calendar'
- * Version: 1.1.0
+ * Version: 1.1.1
  * Date: 09-27-2013
  * Author: Casey Patrick Driscoll
  * Author URI: http://caseypatrickdriscoll.com
@@ -81,7 +81,7 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
     // If the 'patched_up_pixel_calendar' transient doesn't exist in the db, make a new one and save it
     // Note the calendar is instantiated with the styles from before.
     if ( !get_transient( 'patched_up_pixel_calendar' ) ) 
-			update_transient();
+			update_patched_up_pixel_calendar_transient();
 
     // Either way, now is the time to print out the saved calendar
     echo get_transient( 'patched_up_pixel_calendar' );
@@ -125,7 +125,7 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
 		<div class="widget_patched_up_pixel_calendar"> 
 			<?php
     	  if ( !get_transient( 'patched_up_pixel_calendar' ) ) 
-					update_transient();
+					update_patched_up_pixel_calendar_transient();
 
 				echo get_transient( 'patched_up_pixel_calendar' );
 			?>
@@ -146,7 +146,7 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
 
 		update_option('patched_up_pixel_calendar_style', $style);
 
-    update_transient();
+    update_patched_up_pixel_calendar_transient();
   
     return $instance;
   }
@@ -154,13 +154,13 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
 
 }
 
-function update_transient($style) {
+function update_patched_up_pixel_calendar_transient($style) {
   set_transient( 'patched_up_pixel_calendar', 
 								 new Patched_Up_Pixel_Calendar(get_option('patched_up_pixel_calendar_style') )
 							 );
 }
-add_action( 'save_post', 'update_transient' );
-add_action( 'delete_post', 'update_transient' );
+add_action( 'save_post', 'update_patched_up_pixel_calendar_transient' );
+add_action( 'delete_post', 'update_patched_up_pixel_calendar_transient' );
 
 // Style the preview grid in the widget admin
 function register_patched_up_pixel_calendar_styles() {
