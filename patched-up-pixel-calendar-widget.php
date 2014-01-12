@@ -3,7 +3,7 @@
 /* Plugin Name: Patched Up Pixel Calendar
  * Plugin URI: http://patchedupcreative.com/plugins/pixel-calendar
  * Description: A widget for displaying all your posts as a minimalist raster calendar of 'pixels' similar to Github's 'contribution calendar'
- * Version: 1.1.1
+ * Version: 1.1.2
  * Date: 09-27-2013
  * Author: Casey Patrick Driscoll
  * Author URI: http://caseypatrickdriscoll.com
