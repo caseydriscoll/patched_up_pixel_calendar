@@ -3,7 +3,7 @@
 /* Plugin Name: Patched Up Pixel Calendar
  * Plugin URI: http://patchedupcreative.com/plugins/pixel-calendar
  * Description: A widget for displaying all your posts as a minimalist raster calendar of 'pixels' similar to Github's 'contribution calendar'
- * Version: 1.1.2
+ * Version: 1.2.0
  * Date: 09-27-2013
  * Author: Casey Patrick Driscoll
  * Author URI: http://caseypatrickdriscoll.com
@@ -90,6 +90,9 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
   }
 
   public function form( $instance ) {
+		wp_enqueue_style( 'wp-color-picker' );
+    wp_enqueue_script( 'patched-up-pixel-calendar', plugins_url('js/patched-up-pixel-calendar.js', __FILE__ ), array( 'wp-color-picker' ), false, true );
+
     // Grab the existing styling variables if they exist
     if ( isset($instance) ) extract($instance);
 
@@ -105,8 +108,9 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
     </p>
     <p><?php // Color form for base color. Will be js color picker in the future ?>
       <label for="<?php echo $this->get_field_id('color');?>">Pixel Base Color:</label> 
+			<br />
       <input  type="text"
-              class="widefat"
+              class="color"
               id="<?php echo $this->get_field_id('color'); ?>"
               name="<?php echo $this->get_field_name('color'); ?>"
               maxlength="6"
@@ -114,8 +118,9 @@ class Patched_Up_Pixel_Calendar_Widget extends WP_Widget {
     </p>
     <p><?php // Hovercolor form. Again will be js color picker in the future ?>
       <label for="<?php echo $this->get_field_id('hovercolor');?>">Pixel Hover Color:</label> 
+			<br />
       <input  type="text"
-              class="widefat"
+              class="color"
               id="<?php echo $this->get_field_id('hovercolor'); ?>"
               name="<?php echo $this->get_field_name('hovercolor'); ?>"
               maxlength="6"
