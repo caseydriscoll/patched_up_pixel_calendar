@@ -1,6 +1,6 @@
 .widget_patched_up_pixel_calendar {
   position: relative;
-  padding: 10px !important;
+  padding: 5px !important;
 } 
 .widget_patched_up_pixel_calendar * {  
   position: relative;
@@ -47,8 +47,6 @@
   
 .patched_up_pixel_calendar_day {
   display: block; clear:both; 
-  width:100%; height: 0;
-  padding: 0 0 100% 0 !important; margin: 0px !important; 
   width:100%; height: 0; /* Expands to fill week, padding makes it 'square' */
   padding: 0 0 100% 0 !important; margin: 0px !important; /* not perfect squares on low numbers */
   border-right: 1px solid #ffffff !important; /* Border instead of margin sets cleaner design and bigger target */
