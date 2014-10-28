@@ -1,5 +1,6 @@
 .widget_patched_up_pixel_calendar {
   position: relative;
+  padding: 10px !important;
 } 
 .widget_patched_up_pixel_calendar * {  
   position: relative;
