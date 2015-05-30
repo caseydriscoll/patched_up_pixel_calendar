@@ -1,10 +1,10 @@
-=== Patched Up Pixel Calendar ===
+=== PixelPatch ===
 Contributors: caseypatrickdriscoll
 Donate link: http://caseypatrickdriscoll.com
 Tags: widget, calendar, minimalist
 Requires at least: 3.6.1
 Tested up to: 3.8
-Stable tag: 1.2.0
+Stable tag: 2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ A widget that produces a responsive, minimalist 'raster' calendar of pixels of a
 
 == Description ==
 
-Patched Up Pixel Calendar is a minimalist 'raster' pixel calendar widget for your blog. It queries all posts from the last 365 days and caches the results as a transient. The transient is updated every 24 hours, when a new post is saved, or when the widget settings are changed.
+PixelPatch is a minimalist 'raster' pixel calendar widget for your blog. It queries all posts from the last 365 days and caches the results as a transient. The transient is updated every 24 hours, when a new post is saved, or when the widget settings are changed.
 
 Each 'pixel' in the calendar is a link to that day's archive page. The color of the pixel (its opacity) is intesified for every post on that day. On hover, a tooltip displays the names of each post from that day.
 
@@ -24,12 +24,16 @@ The html produced is 100% responsive without the aid of any javascript or images
 
 Installation is very simple
 
-1. Upload the 'patched_up_pixel_calendar/' folder to the '/wp-content/plugins/' directory
+1. Upload the 'pixelpatch/' folder to the '/wp-content/plugins/' directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Drag widget into widget section to finish install
 4. Customize calendar pixel colors with six digit hexidecimal color codes in the widget form
 
 == Changelog ==
+
+= 2.0 =
+
+Refactor to 'PixelPatch'
 
 = 1.2.0 =
 

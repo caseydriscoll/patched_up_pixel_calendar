@@ -1,114 +1,120 @@
-.widget_patched_up_pixel_calendar {
-  position: relative;
-  padding: 5px !important;
+.widget_pixelpatch_calendar {
+	position: relative;
+	padding: 5px !important;
 } 
-.widget_patched_up_pixel_calendar * {  
-  position: relative;
-  box-sizing: border-box; 
+.widget_pixelpatch_calendar * {  
+	position: relative;
+	box-sizing: border-box; 
 }
 
-.widget-content .widget_patched_up_pixel_calendar {
+.widget-content .widget_pixelpatch_calendar {
 	margin-bottom: 20px; /* Separation for preview on widget admin page */
 }
 
-.patched_up_pixel_calendar_months {
-  display: none; /* Feature I'm hoping to add later. Hidden for now */
-  position: absolute;
-  width: 100%;
-  font-size: 1rem;
-  }
-  .patched_up_pixel_calendar_months li {
-    float: left;
-    padding-right: 2.7%;
-  }
-  .patched_up_pixel_calendar_months li:last-child {
-    padding: 0;
-  }
+.pixelpatch_months {
+	display: none; /* Feature I'm hoping to add later. Hidden for now */
+	position: absolute;
+	width: 100%;
+	font-size: 1rem;
+	}
+	.pixelpatch_months li {
+		float: left;
+		padding-right: 2.7%;
+	}
+	.pixelpatch_months li:last-child {
+		padding: 0;
+	}
 
 /* CLEVER TRICK ALERT */
 /* Turns out, for responsive and proportional designs,
- * setting height:0; a percentage padding-bottom will
+ * setting height: 0; a percentage padding-bottom will
  * make the height equal to a percent of the width.
  * Neat!
  */
-#patched_up_pixel_calendar { 
-  width: 100%; height: 0; 
-  padding: 0 0 15% 0; margin: 0 auto; 
+.pixelpatch_calendar { 
+	width: 100%; max-width: 1200px; height: 0; 
+	padding: 0 0 15% 0; margin: 0 auto; 
 }
 
-.patched_up_pixel_calendar_week { 
-  display:block; float:left;
-  width: 1.886792453%; height:0; /* Roughly 1/53 of 100% */
-  padding: 0 0 13.207547171% 0; /* Roughly 1/7 of 100% */
-  border: none !important;
+.pixelpatch_week { 
+	display: block; float:left;
+	width: 1.886792453% !important; height:0; /* Roughly 1/53 of 100% */
+	padding: 0 0 13.207547171% 0 !important; /* Roughly 1/7 of 100% */
+	border: none !important;
 }
 
-.patched_up_pixel_calendar_week ul { margin: 0 !important; } 
-  
-.patched_up_pixel_calendar_day {
-  display: block; clear:both; 
-  width:100%; height: 0; /* Expands to fill week, padding makes it 'square' */
-  padding: 0 0 100% 0 !important; margin: 0px !important; /* not perfect squares on low numbers */
-  border-right: 1px solid #ffffff !important; /* Border instead of margin sets cleaner design and bigger target */
-  border-bottom: 1px solid #ffffff !important;
+.pixelpatch_week ul { margin: 0 !important; } 
+	
+.pixelpatch_day {
+	display: block; clear:both; 
+	width: 100%; height: 0; /* Expands to fill week, padding makes it 'square' */
+	padding: 0 0 100% 0 !important; margin: 0px !important; /* not perfect squares on low numbers */
+	border-right: 2px solid #66d73a !important; /* Border instead of margin sets cleaner design and bigger target */
+	border-bottom: 2px solid #66d73a !important;
 }
 
-.patched_up_pixel_calendar_blankday {
-  display:block; clear:both; 
-  width:100%; height: 0;
-  padding: 0 0 100% 0 !important; margin-bottom: 0px !important; 
-  background-color: #ffffff;
-  border-right: 1px solid #ffffff !important;
-  border-bottom: 1px solid #ffffff !important;
-  opacity: 0.1;
+.pixelpatch_day a,
+.pixelpatch_day a:hover {
+	border: none !important;
+	box-shadow: none !important;
+}
+
+.pixelpatch_blankday {
+	display:block; clear:both; 
+	width: 100%; height: 0;
+	padding: 0 0 100% 0 !important; margin-bottom: 0px !important; 
+	background-color: transparent;
+	border-right: 2px solid #66d73a !important;
+	border-bottom: 2px solid #66d73a !important;
 }
 
 /* Tooltip */
 
-.patched_up_pixel_calendar_day.tooltip a { 
-  display: block;
-  width: 100%; height: 0;
-  padding: 0 0 105% 0; margin: 0;
-  text-decoration: none; border: none;
-  cursor: pointer;
+.pixelpatch_day.tooltip a { 
+	display: block;
+	width: 100%; height: 0;
+	padding: 0 0 105% 0; margin: 0;
+	text-decoration: none; border: none;
+	cursor: pointer;
 }
 
-.patched_up_pixel_calendar_day.tooltip span {
-  z-index: 99; display: none; 
-  width: 150px;
-  padding: 0; margin: 20px 0 0 -75px ;
-  font-size: 12px;
-  line-height: 15px;
-  color:#111;
-  border: 1px solid #000; 
-  background: #ffffff;
-  text-align: center;
+.pixelpatch_day.tooltip span {
+	z-index: 99; display: none; 
+	width: 150px;
+	padding: 0; margin: 20px 0 0 -75px ;
+	font-size: 12px;
+	line-height: 15px;
+	color: #111 !important;
+	border: 1px solid #000; 
+	background: #ffffff;
+	text-align: center;
 }
-.patched_up_pixel_calendar_day.tooltip span strong {
-  display: block;
-  width: 140px;
-  padding: 5px; margin: 0 auto;
-  font-size: 12px;
-  text-align: center;
-  border-bottom: 1px solid #000000;
+.pixelpatch_day.tooltip span strong {
+	display: block;
+	width: 140px;
+	padding: 5px; margin: 0 auto;
+	font-size: 12px;
+	text-align: center;
+	border-bottom: 1px solid #000000;
+	color: black !important;
 }
-.patched_up_pixel_calendar_day.tooltip span p {
-  padding: 5px; margin: 0;
-  text-align: left;
+.pixelpatch_day.tooltip span p {
+	padding: 5px; margin: 0;
+	text-align: left;
+	color: black !important;
+	text-shadow: none !important;
 }
-.patched_up_pixel_calendar_day.tooltip:hover span{
-  display: inline; position: absolute; 
-  
+.pixelpatch_day.tooltip:hover span{
+	display: inline; position: absolute; 
 }
-    
+
 /* CSS3 extras */
-.patched_up_pixel_calendar_day.tooltip span
-{
-    border-radius:2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-        
-    -moz-box-shadow: 0px 5px 8px #CCC;
-    -webkit-box-shadow: 0px 5px 8px #CCC;
-    box-shadow: 0px 5px 8px #CCC;
+.pixelpatch_day.tooltip span {
+	-webkit-border-radius: 2px;
+	   -moz-border-radius: 2px;
+	        border-radius: 2px;
+
+/*	-webkit-box-shadow: 0px 5px 8px #CCC;
+	   -moz-box-shadow: 0px 5px 8px #CCC;
+	        box-shadow: 0px 5px 8px #CCC;*/
 }
